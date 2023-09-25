@@ -77,6 +77,8 @@ var CHANNEL = {
     emotes: []
 };
 
+var PLAYLIST = [];
+
 var PLAYER = false;
 var LIVESTREAM_CHROMELESS = false;
 var FLUIDLAYOUT = false;
@@ -178,6 +180,9 @@ var USEROPTS = {
     qbtn_hide            : getOrDefault("qbtn_hide", false),
     qbtn_idontlikechange : getOrDefault("qbtn_idontlikechange", false),
     peertube_risk        : getOrDefault("peertube_risk", false),
+    yt_classic_embed     : getOrDefault("yt_classic_embed", false),
+    invidious_instance   : getOrDefault("invidious_instance", "https://vids.mare.stream/"),
+    invidious_adaptive   : getOrDefault("invidious_adaptive", false),
     // Chat tab
     show_timestamps      : getOrDefault("show_timestamps", true),
     sort_rank            : getOrDefault("sort_rank", true),

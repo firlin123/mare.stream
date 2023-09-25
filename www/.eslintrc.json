@@ -32,6 +32,7 @@
         "PL_QUEUED_ACTIONS": "writable",
         "PL_WAIT_SCROLL": "writable",
         "PLAYER": "writable",
+        "PLAYLIST": "writable",
         "REBUILDING": "writable",
         "SCROLLCHAT": "writable",
         "SOCKETIO_CONNECT_ERROR_COUNT": "writable",

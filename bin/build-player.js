@@ -33,6 +33,7 @@ var order = [
     'hls.coffee',
     'raw-file.coffee',
     'rtmp.coffee',
+    'invidious.coffee',
 
     // mediaUpdate handler
     'update.coffee'

@@ -1,5 +1,6 @@
 TYPE_MAP =
     yt: YouTubePlayer
+    iv: InvidiousPlayer
     vi: VimeoPlayer
     dm: DailymotionPlayer
     gd: GoogleDrivePlayer

@@ -654,6 +654,9 @@ function showUserOptions() {
     $("#us-oldbtns").prop("checked", USEROPTS.qbtn_idontlikechange);
     $("#us-default-quality").val(USEROPTS.default_quality || "auto");
     $("#us-peertube").prop("checked", USEROPTS.peertube_risk);
+    $("#us-yt-classic-embed").prop("checked", USEROPTS.yt_classic_embed);
+    $("#us-invidious-instance").val(USEROPTS.invidious_instance);
+    $("#us-invidious-adaptive").prop("checked", USEROPTS.invidious_adaptive);
 
     $("#us-chat-timestamp").prop("checked", USEROPTS.show_timestamps);
     $("#us-sort-rank").prop("checked", USEROPTS.sort_rank);
@@ -691,6 +694,9 @@ function saveUserOptions() {
     USEROPTS.qbtn_idontlikechange = $("#us-oldbtns").prop("checked");
     USEROPTS.default_quality      = $("#us-default-quality").val();
     USEROPTS.peertube_risk        = $("#us-peertube").prop("checked");
+    USEROPTS.yt_classic_embed     = $("#us-yt-classic-embed").prop("checked");
+    USEROPTS.invidious_instance   = $("#us-invidious-instance").val();
+    USEROPTS.invidious_adaptive   = $("#us-invidious-adaptive").prop("checked");
 
     USEROPTS.show_timestamps      = $("#us-chat-timestamp").prop("checked");
     USEROPTS.sort_rank            = $("#us-sort-rank").prop("checked");
@@ -790,6 +796,58 @@ function applyOpts() {
         }
         else {
             USEROPTS.notifications = "never";
+        }
+    }
+
+    if (PLAYER && PLAYER.mediaType === (USEROPTS.yt_classic_embed ?  "iv" : "yt")) {
+        var duration = "00:01";
+        var id = "";
+        var paused = false;
+        var seconds = 1;
+        var title = "";
+        var type = USEROPTS.yt_classic_embed ? "yt" : "iv"; 
+
+        if (PLAYER.getData) {
+            var data = PLAYER.getData();
+            duration = data.duration;
+            id = data.id;
+            seconds = data.seconds;
+            title = data.title;
+        }
+        if (PLAYER.paused) {
+            paused = PLAYER.paused;
+        }
+
+        function onTime(currentTime) {
+            var newData = {
+                currentTime:  currentTime,
+                duration: duration,
+                id: id,
+                meta: {},
+                paused: paused,
+                seconds: seconds,
+                title: title,
+                type: type
+            };
+            loadMediaPlayer(newData);
+        }
+        if(PLAYER.getTime) PLAYER.getTime(onTime);
+        else onTime(0);
+    }
+    else if (!USEROPTS.yt_classic_embed && PLAYER && PLAYER.mediaType === "iv") {    
+        if(PLAYER.load && PLAYER.getData && PLAYER.getInstance && PLAYER.loaded && PLAYER.hasAdaptivity && PLAYER.getAdaptive && PLAYER.updateMetaAndReload) {
+            var pInst = PLAYER.getInstance();
+            var cInst = getInvidiousApiUrl();
+            if(pInst.protocol !== cInst.protocol || pInst.host !== cInst.host) {
+                var data = PLAYER.getData();
+                if(data.metaLoaded) delete data.metaLoaded;
+                PLAYER.load(data);
+            }
+            else {
+                if(PLAYER.loaded() && PLAYER.hasAdaptivity() && PLAYER.getAdaptive() != USEROPTS.invidious_adaptive) {
+                    PLAYER.updateMetaAndReload();
+                }
+            }
         }
     }
 }
@@ -3468,3 +3526,12 @@ CyTube._internal_do_not_use_or_you_will_be_banned.addUserToList = function (data
     addUserDropdown(div, data);
     div.appendTo($("#userlist"));
 };
+
+function findIndexByUID(arr, uid) {
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i].uid === uid) {
+            return i;
+        }
+    }
+    return -1;
+}
