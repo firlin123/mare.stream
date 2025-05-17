@@ -4,6 +4,7 @@ window.YouTubePlayer = class YouTubePlayer extends Player
             return new YouTubePlayer(data)
 
         @setMediaProperties(data)
+        @data = data
         @pauseSeekRaceCondition = false
 
         waitUntilDefined(window, 'YT', =>
@@ -29,6 +30,7 @@ window.YouTubePlayer = class YouTubePlayer extends Player
 
     load: (data) ->
         @setMediaProperties(data)
+        @data = data
         if @yt and @yt.ready
             @yt.loadVideoById(data.id, data.currentTime)
         else
@@ -94,3 +96,6 @@ window.YouTubePlayer = class YouTubePlayer extends Player
                 cb(@yt.getVolume() / 100)
         else
             cb(VOLUME)
+    
+    getData: () ->
+        return @data

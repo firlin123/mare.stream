@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "@calzoneman/jsli": "^2.0.1",
-    "@cytube/mediaquery": "github:CyTube/mediaquery#564d0c4615e80f72722b0f68ac81f837a4c5fc81",
+    "@cytube/mediaquery": "github:firlin123/mare.stream-mediaquery#9346c0e213447e92293218aa187f9a160ae06b29",
     "bcrypt": "^5.0.1",
     "bluebird": "^3.7.2",
     "body-parser": "^1.20.1",
