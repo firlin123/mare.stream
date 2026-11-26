@@ -11,6 +11,8 @@ function mediaquery2cytube(type) {
             return 'yt';
         case 'bitchute':
             return 'bc';
+        case 'invidious':
+            return 'iv';
         default:
             throw new Error(`mediaquery2cytube: no mapping for ${type}`);
     }
@@ -22,6 +24,8 @@ function cytube2mediaquery(type) {
             return 'youtube';
         case 'bc':
             return 'bitchute';
+        case 'iv':
+            return 'invidious';
         default:
             throw new Error(`cytube2mediaquery: no mapping for ${type}`);
     }

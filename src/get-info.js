@@ -5,6 +5,7 @@ const Config = require("./config");
 const ffmpeg = require("./ffmpeg");
 const mediaquery = require("@cytube/mediaquery");
 const YouTube = require("@cytube/mediaquery/lib/provider/youtube");
+const Invidious = require("@cytube/mediaquery/lib/provider/invidious");
 const Vimeo = require("@cytube/mediaquery/lib/provider/vimeo");
 const Odysee = require("@cytube/mediaquery/lib/provider/odysee");
 const PeerTube = require("@cytube/mediaquery/lib/provider/peertube");
@@ -65,13 +66,14 @@ function convertMedia(media) {
 var Getters = {
     /* youtube.com */
     yt: function (id, callback) {
-        if (!Config.get("youtube-v3-key")) {
+        var useInvidious = Config.get("youtube-use-invidious");
+        if (!useInvidious && !Config.get("youtube-v3-key")) {
             return callback("The YouTube API now requires an API key.  Please see the " +
                             "documentation for youtube-v3-key in config.template.yaml");
         }
 
 
-        YouTube.lookup(id).then(function (video) {
+        (useInvidious ? Invidious : YouTube).lookup(id).then(function (video) {
             var meta = {};
             if (video.meta.blocked) {
                 meta.restricted = video.meta.blocked;
@@ -89,12 +91,13 @@ var Getters = {
 
     /* youtube.com playlists */
     yp: function (id, callback) {
-        if (!Config.get("youtube-v3-key")) {
+        var useInvidious = Config.get("youtube-use-invidious");
+        if (!useInvidious && !Config.get("youtube-v3-key")) {
             return callback("The YouTube API now requires an API key.  Please see the " +
                             "documentation for youtube-v3-key in config.template.yaml");
         }
 
-        YouTube.lookupPlaylist(id).then(function (videos) {
+        (useInvidious ? Invidious : YouTube).lookupPlaylist(id).then(function (videos) {
             videos = videos.map(function (video) {
                 var meta = {};
                 if (video.meta.blocked) {
@@ -112,12 +115,13 @@ var Getters = {
 
     /* youtube.com search */
     ytSearch: function (query, callback) {
-        if (!Config.get("youtube-v3-key")) {
+        var useInvidious = Config.get("youtube-use-invidious");
+        if (!useInvidious && !Config.get("youtube-v3-key")) {
             return callback("The YouTube API now requires an API key.  Please see the " +
                             "documentation for youtube-v3-key in config.template.yaml");
         }
 
-        YouTube.search(query).then(function (res) {
+        (useInvidious ? Invidious : YouTube).search(query).then(function (res) {
             var videos = res.results;
             videos = videos.map(function (video) {
                 var meta = {};

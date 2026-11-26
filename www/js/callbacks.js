@@ -665,6 +665,8 @@ const Callbacks = {
 
     /* REGION Playlist Stuff */
     playlist: function(data) {
+        PLAYLIST = data.slice();
+    
         PL_QUEUED_ACTIONS = [];
         // Clear the playlist first
         var q = $("#queue");
@@ -690,6 +692,13 @@ const Callbacks = {
     },
 
     queue: function(data) {
+        if (data.after === "prepend") PLAYLIST.unshift(data.item);
+        else if (data.after === "append") PLAYLIST.push(data.item);
+        else {
+            var idx = findIndexByUID(PLAYLIST, data.after);
+            if (idx !== -1) PLAYLIST.splice(idx + 1, 0, data.item);
+        }
+    
         PL_ACTION_QUEUE.queue(function (plq) {
             stopQueueSpinner(data.item.media);
             var li = makeQueueEntry(data.item, true);
@@ -736,6 +745,9 @@ const Callbacks = {
     },
 
     setTemp: function(data) {
+        var idx = findIndexByUID(PLAYLIST, data.uid);
+        if (idx !== -1) PLAYLIST[idx].temp = data.temp;
+    
         var li = $(".pluid-" + data.uid);
         if(li.length == 0)
             return false;
@@ -759,6 +771,9 @@ const Callbacks = {
     },
 
     "delete": function(data) {
+        var idx = findIndexByUID(PLAYLIST, data.uid);
+        if (idx !== -1) PLAYLIST.splice(idx, 1);
+    
         PL_ACTION_QUEUE.queue(function (plq) {
             PL_WAIT_SCROLL = true;
             var li = $(".pluid-" + data.uid);
@@ -771,6 +786,27 @@ const Callbacks = {
     },
 
     moveVideo: function(data) {
+        var fromIdx = findIndexByUID(PLAYLIST, data.from);
+        if (fromIdx !== -1) {
+            if (data.after === "prepend") {
+                PLAYLIST.splice(0, 0, PLAYLIST[fromIdx]);
+                PLAYLIST.splice(fromIdx + 1, 1);
+            } else if (data.after === "append") {
+                PLAYLIST.splice(PLAYLIST.length, 0, PLAYLIST[fromIdx]);
+                PLAYLIST.splice(fromIdx, 1);
+            } else {
+                var toIdx = findIndexByUID(PLAYLIST, data.after);
+                if (toIdx !== -1) {
+                    PLAYLIST.splice(toIdx + 1, 0, PLAYLIST[fromIdx]);
+                    if (toIdx < fromIdx) {
+                        PLAYLIST.splice(fromIdx + 1, 1);
+                    } else {
+                        PLAYLIST.splice(fromIdx, 1);
+                    }
+                }
+            }
+        }
+    
         PL_ACTION_QUEUE.queue(function (plq) {
             playlistMove(data.from, data.after, function () {
                 plq.release();
@@ -804,6 +840,10 @@ const Callbacks = {
         }
 
         function loadNext() {
+            if (data.type == "yt" && !USEROPTS.yt_classic_embed && data.seconds) {
+                data.type = "iv"; // Invidous player.
+            }
+
             if (!PLAYER || data.type !== PLAYER.mediaType) {
                 loadMediaPlayer(data);
             } else {

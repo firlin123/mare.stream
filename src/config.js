@@ -66,6 +66,9 @@ var defaults = {
         }
     },
     "youtube-v3-key": "",
+    "youtube-use-invidious": false,
+    "invidious-instance": "http://127.0.0.1:3000/",
+    "invidious-user-agent": "",
     "channel-path": "r",
     "channel-save-interval": 5,
     "max-channels-per-user": 5,
@@ -394,6 +397,16 @@ function preprocessConfig(cfg) {
             "not work.  See youtube-v3-key in config.template.yaml and " +
             "https://developers.google.com/youtube/registering_an_application for " +
             "information on registering an API key.");
+    }
+
+    if(cfg["invidious-instance"]) {
+        require("@cytube/mediaquery/lib/provider/invidious").setInstance(
+            cfg["invidious-instance"]);
+    }
+
+    if(cfg["invidious-user-agent"]) {
+        require("@cytube/mediaquery/lib/provider/invidious").setUserAgent(
+            cfg["invidious-user-agent"]);
     }
 
     if (cfg["twitch-client-id"]) {

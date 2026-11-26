@@ -122,6 +122,13 @@ io:
 #    $ export YOUTUBE_API_KEY="your key here"
 #    $ curl "https://www.googleapis.com/youtube/v3/search?key=$YOUTUBE_API_KEY&part=id&maxResults=1&q=test+video&type=video"
 youtube-v3-key: ''
+# Use Invidious instead of official YouTube API for retrieving data
+youtube-use-invidious: false
+# Invidious instance to use for YouTube queries.
+invidious-instance: 'http://127.0.0.1:3000/'
+# Set a custom user-agent to use when making requests to Invidious.
+# Some Invidious instances might block API requests that do not appear to come from a browser.
+invidious-user-agent: ''
 # Limit for the number of channels a user can register
 max-channels-per-user: 5
 # Limit for the number of accounts an IP address can register
